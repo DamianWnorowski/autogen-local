@@ -1,122 +1,95 @@
-# 🤖 AutoGen Local Workflow Suite
+# autogen-local
 
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+Local multi-agent framework built on top of AutoGen + Ollama. Runs entirely on your own hardware.
 
-**Zero-cost multi-agent AI workflow suite.** Runs 100% locally on your GPU with Ollama. No cloud APIs required.
+I built this because I wanted to experiment with multi-agent workflows without paying for API calls. Works pretty well on a 3080 but should run on anything that can handle Ollama.
 
-## ✨ Features
+## what's in here
 
-| Feature | Description |
-|---------|-------------|
-| **Multi-Agent Crew** | Analyst, Researcher, Coder, Reviewer, Executor working together |
-| **Code Review** | Security, Performance, Style, Architecture analysis |
-| **Research Pipeline** | Query expansion, fact-checking, synthesis |
-| **CI/CD Automation** | Lint, test, build, deploy with auto-fix |
-| **Task Orchestrator** | Parallel execution with priorities and dependencies |
-| **BFT Consensus** | Byzantine fault tolerant agent voting |
-| **Genetic Evolution** | Evolve optimal prompts over generations |
-| **Swarm Intelligence** | Ant colony optimization for solution search |
-| **Self-Healing** | Auto-recovery from failures |
-| **Persistent Memory** | SQLite + embeddings semantic search |
-| **Distributed Comms** | Redis pub/sub, ZeroMQ mesh networking |
-| **Observability** | Full tracing with metrics |
-| **REPL Playground** | Interactive agent testing |
-| **Web Dashboard** | Real-time monitoring UI |
+- multi-agent crews (analyst, coder, reviewer, etc working together)
+- code review pipeline - catches security/perf/style issues
+- research workflow - breaks down questions and synthesizes answers  
+- task orchestration with parallel execution
+- some experimental stuff (BFT consensus between agents, genetic prompt evolution)
+- persistent memory using sqlite + embeddings
+- redis/zmq support if you want distributed agents across machines
 
-## 🚀 Quick Start
+## setup
 
 ```bash
-# 1. Clone
 git clone https://github.com/DamianWnorowski/autogen-local.git
 cd autogen-local
 
-# 2. Setup (installs Ollama + models + dependencies)
+# this installs ollama, pulls models, sets up venv
 chmod +x setup.sh && ./setup.sh
 
-# 3. Activate and run
 source venv/bin/activate
 python main.py status
 ```
 
-## 📋 Commands
+needs python 3.10+ and ollama. the setup script handles most of it.
+
+## usage
 
 ```bash
-python main.py status                    # Check system status
-python main.py crew "Build a REST API"   # Run multi-agent crew
-python main.py review ./src              # Code review
-python main.py research "BFT consensus"  # Deep research
-python main.py ci ./project              # Run CI/CD pipeline
-python main.py orchestrate               # Parallel task demo
-python main.py chat                      # Interactive chat
+# check if everything's working
+python main.py status
+
+# run the multi-agent crew on a task
+python main.py crew "build a cli todo app"
+
+# review some code
+python main.py review ./src
+
+# research something
+python main.py research "how does raft consensus work"
+
+# just chat
+python main.py chat
 ```
 
-## 🐍 Python API
+or use it as a library:
 
 ```python
-from autogen_local import quick_crew, quick_review, quick_research, chat
+from autogen_local import quick_crew, quick_review, chat
 
-# Multi-agent collaboration
-result = quick_crew("Design a microservice architecture")
-
-# Code review
-findings = quick_review("./src")
-
-# Research
-report = quick_research("Byzantine fault tolerance")
-
-# Simple chat
-response = chat("Explain transformers")
+result = quick_crew("design a rest api")
+findings = quick_review("./myproject")
+response = chat("explain transformers")
 ```
 
-## 📁 Project Structure
+## structure
 
 ```
-autogen_local/
-├── config.py              # Global settings
-├── local_bridge.py        # Ollama LLM wrapper
-├── main.py                # CLI launcher
-├── agents/
-│   ├── base.py            # Agent factory
-│   ├── crew.py            # Multi-agent crew
-│   ├── swarm.py           # Swarm intelligence
-│   ├── genetic.py         # Genetic prompt evolution
-│   ├── bft_consensus.py   # Byzantine consensus
-│   ├── decomposer.py      # Task decomposition
-│   └── self_healing.py    # Self-healing system
-├── workflows/
-│   ├── code_review.py     # Code review pipeline
-│   ├── research.py        # Research pipeline
-│   ├── cicd.py            # CI/CD automation
-│   └── orchestrator.py    # Task orchestration
-├── memory/
-│   ├── persistent.py      # SQLite + embeddings
-│   └── context.py         # Context management
-├── comms/
-│   ├── redis_bus.py       # Redis pub/sub
-│   └── zmq_mesh.py        # ZeroMQ mesh
-├── observability/
-│   └── tracing.py         # Distributed tracing
-└── tools/
-    ├── playground.py      # Interactive REPL
-    ├── dashboard.py       # Web dashboard
-    └── sandbox.py         # Code execution sandbox
+agents/       - agent definitions (crew, swarm, genetic, etc)
+workflows/    - pipelines (code review, research, cicd)
+memory/       - persistence layer
+comms/        - distributed agent communication
+tools/        - repl, dashboard, sandbox
 ```
 
-## 🐳 Docker
+## models
+
+by default uses llama3:8b for general stuff and deepseek-coder for code tasks. you can change this in config.py or set env vars:
 
 ```bash
-# GPU-accelerated stack
-docker compose up -d
-
-# Run commands
-docker compose exec autogen python main.py crew "task"
+export DEFAULT_MODEL=mistral:7b
+export CODE_MODEL=codellama:13b
 ```
 
-## 💰 Cost
+## docker
 
-**$0.00/forever** — Everything runs locally on your GPU.
+```bash
+docker compose up -d
+docker compose exec autogen python main.py crew "your task"
+```
 
-## 📄 License
+## notes
 
-MIT License - see [LICENSE](LICENSE) for details.
+- the bft consensus and genetic evolution stuff is experimental, might be buggy
+- memory consolidation runs automatically but you can trigger it manually
+- if ollama crashes the self-healing system should restart it
+
+## license
+
+mit
